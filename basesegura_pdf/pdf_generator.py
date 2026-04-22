@@ -9,7 +9,6 @@ Playwright renderiza el HTML con el mismo motor que Chrome, respetando
 """
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
 
 
@@ -19,9 +18,8 @@ def html_to_pdf(html: str, base_url: str, output_path: str | None = None) -> byt
 
     Args:
         html:        Contenido HTML ya procesado (campos rellenos).
-        base_url:    URL base como 'file:///ruta/al/dir/' — se usa para
-                     escribir un archivo temporal que Chromium navega,
-                     resolviendo fuentes y assets relativos correctamente.
+        base_url:    Reservado para compatibilidad futura (assets locales relativos).
+                     Actualmente no se usa porque los templates cargan fuentes vía CDN.
         output_path: Si se especifica, guarda el PDF en disco además de retornarlo.
 
     Returns:
@@ -29,33 +27,19 @@ def html_to_pdf(html: str, base_url: str, output_path: str | None = None) -> byt
     """
     from playwright.sync_api import sync_playwright
 
-    # Resolvemos la ruta del directorio base desde la file:// URL
-    base_dir = base_url.removeprefix("file://").rstrip("/")
+    # Limpiar surrogates que lxml/BS4 puede introducir al serializar el HTML
+    clean_html = html.encode("utf-8", errors="surrogatepass").decode("utf-8", errors="replace")
 
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
-
-        # Escribimos el HTML en un archivo temporal dentro del directorio del
-        # template para que Chromium resuelva fuentes y assets relativos
-        with tempfile.NamedTemporaryFile(
-            mode="w",
-            suffix=".html",
-            dir=base_dir,
-            encoding="utf-8",
-            delete=False,
-        ) as tmp:
-            tmp.write(html)
-            tmp_path = Path(tmp.name)
-
         try:
-            page.goto(tmp_path.as_uri(), wait_until="networkidle")
+            page.set_content(clean_html, wait_until="networkidle")
             pdf_bytes = page.pdf(
-                format="A4",
                 print_background=True,
+                prefer_css_page_size=True,
             )
         finally:
-            tmp_path.unlink(missing_ok=True)
             browser.close()
 
     if output_path:

@@ -5,26 +5,33 @@ Convierte los templates HTML de BaseSegura en PDFs, reemplazando campos interact
 ## Requisitos del sistema
 
 - Python 3.9+
-- Homebrew (macOS)
+- Templates en `~/Documents/BaseSegura/Templates/`
 
 ## Instalación
 
 ```bash
-# 1. Dependencia del sistema (necesaria para WeasyPrint)
-brew install pango
+# Desde la raíz del repositorio (base-segura-core/)
 
-# 2. Dependencias Python (desde el directorio del proyecto)
+# 1. Crear y activar entorno virtual
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 2. Instalar dependencias Python
 pip install -r basesegura_pdf/requirements.txt
+
+# 3. Instalar los browsers de Playwright (solo la primera vez)
+playwright install chromium
 ```
 
 ## Uso
 
 ```bash
-cd /Users/meze/PyCharmMiscProject
+# Desde la raíz del repositorio, con el entorno activado
+source .venv/bin/activate
 python -m basesegura_pdf
 ```
 
-La app guía el proceso paso a paso:
+La CLI guía el proceso paso a paso:
 
 1. Seleccioná el template (Constancia de Visita, Ruido, etc.)
 2. Completá cada campo cuando se solicita
@@ -37,11 +44,22 @@ El PDF se guarda en la ruta indicada.
 ## Estructura
 
 ```
-basesegura_pdf/
-├── cli.py               # Flujo interactivo (entry point)
-├── template_engine.py   # Extracción de campos y relleno de templates
-├── pdf_generator.py     # Conversión HTML → PDF con WeasyPrint
-└── requirements.txt
+base-segura-core/
+├── basesegura_pdf/
+│   ├── __main__.py          # Entry point (python -m basesegura_pdf)
+│   ├── cli.py               # Flujo interactivo
+│   ├── template_engine.py   # Extracción de campos y relleno de templates
+│   ├── pdf_generator.py     # Conversión HTML → PDF con Playwright (Chromium)
+│   └── requirements.txt
+└── verificaciones.txt       # Checklist de verificaciones pendientes
 ```
 
 Los templates se leen desde `~/Documents/BaseSegura/Templates/`.
+
+## Dependencias
+
+| Paquete | Uso |
+|---|---|
+| `playwright` | Renderizado HTML → PDF con Chromium headless |
+| `beautifulsoup4` | Parsing y manipulación del HTML de los templates |
+| `lxml` | Parser HTML para BeautifulSoup |
