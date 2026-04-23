@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>BaseSegura — Template Protocolo de Ruido (Res. SRT 85/2012)</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
 <style>
   :root{
     --bs-primary:      #0F3D5C;
@@ -412,32 +414,75 @@
   }
 
   @media print{
+    /* ── Forzar renderizado de fondos, gradientes y pseudo-elementos ────────
+       Chromium no imprime backgrounds sin esto aunque print_background=true
+       esté activo en page.pdf(). Cubre ::before / ::after (gradientes hero,
+       banda de marca del header interno, etc.) */
+    *, *::before, *::after{
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* ── html / body ────────────────────────────────────────────────────────
+       NO fijar width ni overflow aquí.
+       • El contexto Playwright ya tiene viewport 794×1123 px (= 210×297 mm
+         a 96 dpi), que determina el ancho de layout de las hojas portrait.
+       • overflow:hidden en body recortaría la hoja landscape (297 mm de ancho)
+         que desborda el contenedor portrait — ese es el bug de la página 8. */
     html, body{
-      width: 210mm !important;
       margin: 0 !important;
       padding: 0 !important;
       background: #fff !important;
-      overflow: hidden !important;
     }
+
     .workspace-title, .page-label, .legend-tip, .note-bubble{ display:none; }
+
+    /* ── Hojas portrait (default) ─────────────────────────────────────────── */
     .sheet{
       box-shadow: none;
       width: 210mm !important;
       margin: 0 !important;
+      /* Propiedades legacy + modernas para máxima compatibilidad Chromium */
       page-break-after: always;
+      break-after: page;
       height: 297mm !important;
       min-height: 0 !important;
       overflow: hidden;
     }
+
+    /* ── Hoja landscape (página 8) ────────────────────────────────────────
+       Named page → aplica @page landscape-page { size: 297mm 210mm }.
+       break-before/after modernos + legacy garantizan que la hoja ocupe
+       exactamente su propia página en el PDF. */
     .sheet.landscape{
       width: 297mm !important;
       height: 210mm !important;
       page: landscape-page;
       page-break-before: always;
+      break-before: page;
       page-break-after: always;
+      break-after: page;
     }
-    .sheet:last-of-type{ page-break-after: auto; }
+
+    /* La última hoja no fuerza salto adicional */
+    .sheet:last-of-type{
+      page-break-after: auto;
+      break-after: auto;
+    }
+
+    /* ── Integridad de filas en tablas ────────────────────────────────────
+       Evita que una fila se parta entre el final de una página y el inicio
+       de la siguiente. Aplica a todas las variantes de tabla del sistema. */
+    table.srt tr,
+    table.data tr,
+    table.meta tr,
+    table.ladder tr{
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
   }
+
+  /* ── Tamaños de página CSS (prefer_css_page_size=True en page.pdf()) ─── */
   @page{
     size: 210mm 297mm;
     margin: 0;
