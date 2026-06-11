@@ -31,6 +31,17 @@ _INJECTED_CSS = """
   font-weight: 700 !important;
   line-height: 14px !important;
 }
+@media print {
+  .field {
+    background: transparent !important;
+    border-bottom: none !important;
+    border: none !important;
+  }
+}
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
 """
 
 
@@ -38,7 +49,7 @@ def discover_templates(templates_dir: str) -> list[dict]:
     """Escanea templates_dir y retorna [{name, path, display_name}] ordenado por nombre."""
     path = Path(templates_dir)
     result = []
-    for f in sorted(path.glob("*.html")):
+    for f in sorted(path.glob("BaseSegura_*.html")):
         display = (
             f.stem
             .replace("BaseSegura_", "")
@@ -180,6 +191,30 @@ def fill_template(
         if check_box:
             check_box.clear()
             check_box.append(NavigableString("✓"))
+
+    # 2b. Limpiar [ESPECIFICAR] en activity-otros no seleccionados
+    for item in soup.find_all(class_="activity-otros"):
+        label_el = item.find(class_="label-text")
+        if not label_el:
+            continue
+        label = label_el.get_text(strip=True).rstrip(":")
+        if label in checked_set:
+            continue
+        field_el = item.find(class_="field")
+        if field_el:
+            field_el.clear()
+
+    # 2c. Eliminar secciones opcionales cuyos campos están todos vacíos o sin rellenar
+    for section in soup.find_all(attrs={"data-optional-section": True}):
+        fields_in_section = section.find_all(class_="field")
+        if not fields_in_section:
+            continue
+        all_empty = all(
+            not el.get_text(strip=True) or PLACEHOLDER_RE.search(el.get_text())
+            for el in fields_in_section
+        )
+        if all_empty:
+            section.decompose()
 
     # 3. Inyectar CSS adicional (solo append al <style> existente, sin tocar nada más)
     style_tag = soup.find("style")

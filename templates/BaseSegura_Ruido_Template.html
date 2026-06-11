@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<title>BaseSegura — Template Protocolo de Ruido (Res. SRT 85/2012)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
+<style>
+  :root{
+    --bs-primary:      #0F3D5C;
+    --bs-primary-2:    #0A2D45;
+    --bs-primary-3:    #16507A;
+    --bs-accent:       #26A76F;
+    --bs-accent-2:     #1E8A5D;
+    --bs-ok:           #26A76F;
+    --bs-amber:        #F59E0B;
+    --bs-warn:         #C1121F;
+    --bs-ink:          #0E2F4F;
+    --bs-ink-2:        #3F4D5C;
+    --bs-muted:        #7A8797;
+    --bs-line:         #D1D5DB;
+    --bs-line-soft:    #E5E7EB;
+    --bs-bg-soft:      #F4F5F7;
+    --bs-bg-softer:    #F8FAFA;
+    --bs-white:        #FFFFFF;
+    --bs-field-bg:     #FFF9E6;   /* fondo campo editable */
+    --bs-field-bd:     #F4CE5A;   /* borde campo editable */
+
+    --font-title: 'Poppins','DM Sans','Calibri','Arial',sans-serif;
+    --font-body:  'Inter','Calibri','Arial',sans-serif;
+    --font-mono:  'JetBrains Mono','Consolas',monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html,body{ margin:0; padding:0; background:#E3E6EB; font-family:var(--font-body); color:var(--bs-ink); }
+  body{ padding:40px 20px; }
+
+  .workspace-title{
+    max-width:900px; margin: 0 auto 24px; text-align:center;
+    font-family: var(--font-title); color:var(--bs-primary);
+  }
+  .workspace-title h1{ font-size:22px; margin:0 0 4px; letter-spacing:-0.01em;}
+  .workspace-title p{ color:var(--bs-ink-2); font-size:14px; margin:0;}
+
+  .page-label{
+    max-width:210mm; margin:28px auto 8px; font-family:var(--font-title);
+    font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--bs-primary-2);
+    font-weight:600;
+  }
+
+  /* Hoja A4 */
+  .sheet{
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto 40px;
+    background: var(--bs-white);
+    box-shadow: 0 20px 50px rgba(11,37,69,0.15), 0 2px 6px rgba(11,37,69,0.08);
+    position: relative;
+    overflow: hidden;
+    color: var(--bs-ink);
+  }
+  .sheet.landscape{
+    width: 297mm;
+    min-height: 210mm;
+  }
+
+  /* ============================== CARÁTULA ============================== */
+  .cover{
+    padding: 0;
+    display:flex; flex-direction:column;
+    background: var(--bs-white);
+    min-height: 297mm;
+  }
+  .cover-hero{
+    position: relative;
+    height: 95mm;
+    background:
+      linear-gradient(135deg, rgba(11,37,69,0.94) 0%, rgba(19,49,92,0.92) 55%, rgba(27,79,138,0.90) 100%),
+      radial-gradient(circle at 85% 20%, rgba(255,255,255,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 15% 80%, rgba(38,167,111,0.18) 0%, transparent 45%);
+    color: var(--bs-white);
+    padding: 20mm 20mm 0 20mm;
+    overflow: hidden;
+  }
+  .cover-hero::before{
+    content:""; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 8mm 8mm;
+    pointer-events:none;
+  }
+  .cover-hero::after{
+    /* Diagonal decorativa verde: contenida dentro del hero para no crear
+       overflow en el layout de impresión (Chromium calcula la bounding box
+       de transforms y extiende el scrollWidth del documento, lo que dispara
+       shrink-to-fit). Mantener transform-origin interno. */
+    content:""; position:absolute; right:8mm; top:0; bottom:0; width:3px;
+    background: var(--bs-accent);
+    transform: rotate(18deg);
+    transform-origin: center;
+    opacity: 0.9;
+  }
+  .cover-logo{ display:flex; align-items:center; gap:0; position:relative; z-index:2; }
+  .cover-logo .wordmark{
+    font-family:var(--font-title); font-weight:700; font-size:52px; letter-spacing:-0.025em;
+    color: var(--bs-white); line-height: 1;
+  }
+  .cover-logo .wordmark .base{ color: var(--bs-white); }
+  .cover-logo .wordmark .segura{ color: var(--bs-accent); }
+  .cover-tagline{
+    position:relative; z-index:2; margin-top: 14mm;
+    font-family:var(--font-title);
+    font-size: 12px; letter-spacing:0.3em; text-transform:uppercase;
+    color: rgba(255,255,255,0.78);
+  }
+
+  .cover-title-block{ padding: 22mm 20mm 0 20mm; flex:1; }
+  .cover-kicker{
+    font-family:var(--font-title);
+    font-size: 10px; letter-spacing:0.3em; text-transform:uppercase;
+    color: var(--bs-primary-3); font-weight:600; margin-bottom: 10px;
+  }
+  .cover-kicker::before{
+    content:""; display:inline-block; width:28px; height:3px; background:var(--bs-accent);
+    vertical-align: middle; margin-right:10px; border-radius:2px;
+  }
+  .cover-study-type{
+    font-family:var(--font-title);
+    font-weight:700; color:var(--bs-primary);
+    font-size: 34px; line-height:1.1; letter-spacing:-0.015em;
+    margin: 0 0 6px;
+  }
+  .cover-study-sub{
+    font-family:var(--font-title); font-weight:500; color:var(--bs-primary-2);
+    font-size: 18px; line-height:1.3; margin: 0 0 24px;
+  }
+
+  .cover-card{
+    margin-top: 18mm;
+    border: 1px solid var(--bs-line);
+    border-left: 4px solid var(--bs-primary);
+    background: var(--bs-bg-softer);
+    padding: 10mm 10mm 8mm 10mm;
+  }
+  .cover-card .label{
+    font-family:var(--font-title);
+    font-size:10px; letter-spacing:0.18em; text-transform:uppercase;
+    color: var(--bs-muted); font-weight:600; margin-bottom: 3px;
+  }
+  .cover-card .value{
+    font-size:14px; color:var(--bs-ink); font-weight:500; line-height:1.4;
+  }
+  .cover-card .row{ display:grid; grid-template-columns: 1fr 1fr; gap: 8mm 10mm; }
+  .cover-card .row.full{ grid-template-columns: 1fr; }
+  .cover-card .row + .row{ margin-top: 6mm; }
+  .cover-card .value.big{
+    font-size:18px; font-family:var(--font-title); font-weight:600; color:var(--bs-primary);
+  }
+
+  .cover-foot{
+    padding: 10mm 20mm 14mm 20mm;
+    border-top: 1px solid var(--bs-line-soft);
+    display:flex; justify-content:space-between; align-items:flex-end;
+    font-size:10px; color:var(--bs-muted);
+    font-family:var(--font-title); letter-spacing:0.08em; text-transform:uppercase;
+  }
+  .cover-foot .doc-id{ color: var(--bs-primary-2); font-weight:600; }
+
+  /* ============================== HOJA INTERNA ============================== */
+  .inner{
+    display:flex; flex-direction:column;
+    padding-top: 22mm;
+    padding-bottom: 20mm;
+    position: relative;
+  }
+  .inner-header{
+    position: absolute; top:0; left:0; right:0;
+    height: 16mm; padding: 0 20mm;
+    display:flex; justify-content:space-between; align-items:center;
+    border-bottom: 1px solid var(--bs-line-soft);
+    background: var(--bs-white);
+  }
+  .inner-header::after{
+    content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px;
+    background: linear-gradient(90deg, var(--bs-primary) 0%, var(--bs-primary-3) 55%, var(--bs-accent) 100%);
+    opacity: 0.9;
+  }
+  .inner-header .logo-mini{ display:flex; align-items:center; gap:0; }
+  .inner-header .logo-mini .wordmark{
+    font-family:var(--font-title); font-weight:700; font-size:15px; letter-spacing:-0.01em;
+  }
+  .inner-header .logo-mini .wordmark .base{ color:var(--bs-primary); }
+  .inner-header .logo-mini .wordmark .segura{ color:var(--bs-accent); }
+  .inner-header .report-ref{ text-align:right; font-family:var(--font-title); line-height:1.15; }
+  .inner-header .report-ref .type{ font-weight:600; font-size:11px; color:var(--bs-primary-2); text-transform:uppercase; letter-spacing:0.1em; }
+  .inner-header .report-ref .client{ font-size:10px; color:var(--bs-muted); }
+
+  .inner-body{ padding: 0 20mm; flex:1; }
+
+  .section-kicker{
+    font-family:var(--font-title);
+    font-size:10px; letter-spacing:0.24em; text-transform:uppercase;
+    color: var(--bs-primary-3); font-weight:600; margin: 0 0 4px;
+  }
+  .section-title{
+    font-family:var(--font-title); font-weight:700; color:var(--bs-primary);
+    font-size: 22px; line-height:1.2; margin:0 0 4px;
+    letter-spacing:-0.01em;
+  }
+  .section-title::after{
+    content:""; display:block; width:48px; height:4px; background:var(--bs-accent);
+    margin-top: 8px; border-radius:2px;
+  }
+  .h3{
+    font-family:var(--font-title); font-weight:600; color:var(--bs-primary-2);
+    font-size:14px; margin: 18px 0 6px;
+  }
+  .h4{
+    font-family:var(--font-title); font-weight:600; color:var(--bs-ink);
+    font-size:12px; text-transform:uppercase; letter-spacing:0.08em; margin: 14px 0 4px;
+  }
+
+  p{ font-size:11.5px; line-height:1.55; color:var(--bs-ink); margin: 8px 0; text-align:justify; }
+  .lead{ font-size:12px; color:var(--bs-ink-2); line-height:1.55; text-align:justify; }
+
+  /* Campos editables */
+  .field{
+    display:inline-block;
+    background: var(--bs-field-bg);
+    border-bottom: 1.5px dashed var(--bs-field-bd);
+    padding: 0 4px;
+    color: var(--bs-primary-2);
+    font-weight: 600;
+    border-radius: 2px;
+  }
+  .field.block{
+    display:block;
+    border: 1px dashed var(--bs-field-bd);
+    background: var(--bs-field-bg);
+    padding: 6px 10px;
+    margin: 4px 0;
+    min-height: 22px;
+    font-weight: 500;
+    color: var(--bs-ink);
+    line-height:1.5;
+  }
+  .field.block.tall{ min-height: 70px; }
+
+  .callout{
+    margin: 14px 0; padding: 12px 14px;
+    border: 1px solid var(--bs-line-soft);
+    border-left: 3px solid var(--bs-primary-3);
+    background: var(--bs-bg-softer);
+    font-size: 11.5px; line-height:1.5; text-align:justify;
+  }
+  .callout.ok{ border-left-color: var(--bs-accent); }
+  .callout.warn{ border-left-color: var(--bs-amber); }
+  .callout.alert{ border-left-color: var(--bs-warn); }
+  .callout.info{ border-left-color: var(--bs-primary); }
+  .callout .title{
+    font-family:var(--font-title); font-weight:700; color:var(--bs-primary);
+    font-size:11px; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px;
+  }
+
+  /* Tablas técnicas */
+  table.data{
+    width:100%; border-collapse:collapse; margin: 10px 0;
+    font-size: 10px; font-family: var(--font-body);
+  }
+  table.data thead th{
+    background: var(--bs-primary);
+    color: var(--bs-white);
+    font-family: var(--font-title); font-weight:600;
+    font-size: 9px; letter-spacing:0.06em; text-transform:uppercase;
+    text-align: left; padding: 7px 8px; vertical-align: top;
+    border-right: 1px solid rgba(255,255,255,0.15); line-height:1.25;
+  }
+  table.data thead th:last-child{ border-right:none; }
+  table.data tbody td{
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--bs-line-soft);
+    color: var(--bs-ink);
+    vertical-align: top;
+  }
+  table.data tbody tr:nth-child(even) td{ background: var(--bs-bg-softer); }
+  table.data .num{ font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align:right; }
+  .chip{
+    display:inline-block; font-family:var(--font-title); font-weight:600;
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 99px;
+  }
+  .chip.ok{ background: #E3F5EC; color: var(--bs-accent-2); }
+  .chip.warn{ background: #FEF3C7; color: #B45309; }
+  .chip.alert{ background: #FDECEC; color: var(--bs-warn); }
+
+  /* Tabla ficha (meta) */
+  table.meta{
+    width:100%; border-collapse:collapse; margin: 4px 0 10px; font-size: 11px;
+  }
+  table.meta th, table.meta td{
+    padding: 7px 10px; border: 1px solid var(--bs-line-soft); vertical-align:top;
+  }
+  table.meta th{
+    background: var(--bs-bg-soft); text-align:left;
+    font-family:var(--font-title); font-weight:600; color:var(--bs-primary-2);
+    width: 35%;
+  }
+  table.meta td .field.block{ margin:0; }
+
+  /* Tabla oficial SRT (protocolo) */
+  table.srt{
+    width:100%; border-collapse:collapse; margin: 8px 0 10px;
+    font-size: 10.5px; border: 1.5px solid var(--bs-primary);
+  }
+  table.srt th, table.srt td{
+    padding: 7px 9px; border: 1px solid var(--bs-line); vertical-align:top;
+    line-height:1.35;
+  }
+  table.srt .section-row th{
+    background: var(--bs-primary); color:#fff;
+    font-family:var(--font-title); font-weight:600;
+    text-transform:uppercase; letter-spacing:0.08em; font-size:10px;
+    text-align:left;
+  }
+  table.srt .label-cell{
+    background: var(--bs-bg-soft);
+    font-family:var(--font-title); font-weight:500; color:var(--bs-primary-2);
+    width: 34%;
+    font-size:10.5px;
+  }
+  table.srt td.data-cell{ background: var(--bs-white); }
+  table.srt .doc-title{
+    background: var(--bs-primary); color:#fff;
+    font-family:var(--font-title); font-weight:700;
+    text-transform:uppercase; letter-spacing:0.12em; font-size:11px;
+    text-align:center;
+  }
+
+  .two-col{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  ul.clean{ padding-left: 18px; margin: 6px 0; font-size: 11.5px; line-height:1.55; }
+  ul.clean li{ margin-bottom: 3px; }
+
+  /* Pie de página */
+  .inner-footer{
+    position:absolute; left:0; right:0; bottom:0;
+    height: 14mm; padding: 0 20mm;
+    display:flex; align-items:center; justify-content:space-between;
+    border-top: 1px solid var(--bs-line-soft);
+    font-family: var(--font-title);
+    font-size: 9px; color: var(--bs-muted);
+    background:var(--bs-white);
+  }
+  .inner-footer .left, .inner-footer .right{ display:flex; align-items:center; gap:14px; }
+  .inner-footer .sep{ color: var(--bs-line); }
+  .inner-footer span.link{ color: var(--bs-primary-2); font-weight:500; }
+  .inner-footer .pg{
+    font-family: var(--font-mono); font-weight:500; color:var(--bs-primary); letter-spacing: 0.04em;
+  }
+
+  /* Tabla de tiempos de exposición - estilo escalera */
+  table.ladder{
+    width:100%; border-collapse:collapse; margin: 8px 0;
+    font-size: 10.5px; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  }
+  table.ladder thead th{
+    background: var(--bs-primary-2); color:#fff;
+    font-family: var(--font-title);
+    font-weight:600; font-size:10px; letter-spacing:0.08em; text-transform:uppercase;
+    text-align:center; padding: 7px 8px;
+  }
+  table.ladder tbody td{
+    padding: 5px 8px; text-align:center;
+    border-bottom: 1px solid var(--bs-line-soft);
+  }
+  table.ladder tbody tr:nth-child(even) td{ background: var(--bs-bg-softer); }
+
+  /* Bloque "Plano del establecimiento" */
+  .plano-placeholder{
+    border: 1.5px dashed var(--bs-field-bd);
+    background: var(--bs-field-bg);
+    min-height: 130mm;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--bs-primary-2);
+    font-family: var(--font-title); font-weight:500; font-size:12px;
+    text-align:center; padding: 20mm;
+    border-radius: 4px;
+    line-height:1.6;
+  }
+  .plano-placeholder .icon{
+    font-size: 28px; margin-bottom: 8px; display:block;
+    color: var(--bs-primary-3);
+  }
+
+  /* Leyenda campos editables */
+  .legend-tip{
+    background: #F0F6FC;
+    border: 1px solid #CFE3F5;
+    border-left: 4px solid var(--bs-primary-3);
+    padding: 10px 14px;
+    margin: 0 auto 12px;
+    max-width: 210mm;
+    font-family: var(--font-title);
+    font-size: 11.5px;
+    color: var(--bs-primary-2);
+    line-height:1.5;
+  }
+  .legend-tip strong{ color: var(--bs-primary); }
+  .legend-tip .swatch{
+    display:inline-block; width:12px; height:12px; vertical-align:-2px;
+    background: var(--bs-field-bg); border:1px dashed var(--bs-field-bd); margin: 0 4px 0 2px;
+  }
+
+  @media print{
+    /* ── Forzar renderizado de fondos, gradientes y pseudo-elementos ────────
+       Chromium no imprime backgrounds sin esto aunque print_background=true
+       esté activo en page.pdf(). Cubre ::before / ::after (gradientes hero,
+       banda de marca del header interno, etc.) */
+    *, *::before, *::after{
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* ── html / body ────────────────────────────────────────────────────────
+       NO fijar width ni overflow aquí.
+       • El contexto Playwright ya tiene viewport 794×1123 px (= 210×297 mm
+         a 96 dpi), que determina el ancho de layout de las hojas portrait.
+       • overflow:hidden en body recortaría la hoja landscape (297 mm de ancho)
+         que desborda el contenedor portrait — ese es el bug de la página 8. */
+    html, body{
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #fff !important;
+    }
+
+    .workspace-title, .page-label, .legend-tip, .note-bubble{ display:none; }
+
+    /* ── Hojas portrait (default) ─────────────────────────────────────────── */
+    .sheet{
+      box-shadow: none;
+      width: 210mm !important;
+      margin: 0 !important;
+      /* Propiedades legacy + modernas para máxima compatibilidad Chromium */
+      page-break-after: always;
+      break-after: page;
+      height: 297mm !important;
+      min-height: 0 !important;
+      overflow: hidden;
+    }
+
+    /* ── Hoja landscape (página 8) ────────────────────────────────────────
+       Named page → aplica @page landscape-page { size: 297mm 210mm }.
+       break-before/after modernos + legacy garantizan que la hoja ocupe
+       exactamente su propia página en el PDF. */
+    .sheet.landscape{
+      width: 297mm !important;
+      height: 210mm !important;
+      page: landscape-page;
+      page-break-before: always;
+      break-before: page;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* La última hoja no fuerza salto adicional */
+    .sheet:last-of-type{
+      page-break-after: auto;
+      break-after: auto;
+    }
+
+    /* ── Integridad de filas en tablas ────────────────────────────────────
+       Evita que una fila se parta entre el final de una página y el inicio
+       de la siguiente. Aplica a todas las variantes de tabla del sistema. */
+    table.srt tr,
+    table.data tr,
+    table.meta tr,
+    table.ladder tr{
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+  }
+
+  /* ── Tamaños de página CSS (prefer_css_page_size=True en page.pdf()) ─── */
+  @page{
+    size: 210mm 297mm;
+    margin: 0;
+  }
+  @page landscape-page{
+    size: 297mm 210mm;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+  <div class="workspace-title">
+    <h1>BaseSegura — Template Protocolo de Ruido Laboral</h1>
+    <p>Medición de Nivel Sonoro Continuo Equivalente · Res. SRT 85/2012 · Plantilla editable</p>
+  </div>
+
+  <div class="legend-tip">
+    <strong>Cómo usar esta plantilla:</strong> los campos con fondo amarillo claro <span class="swatch"></span> y borde punteado son <strong>editables</strong>. Reemplazarlos por los datos específicos del cliente y de la medición. El resto del texto (marco legal, metodología, criterios) es contenido consolidado de referencia que normalmente no se modifica entre informes.
+  </div>
+
+  <!-- ============ CARÁTULA ============ -->
+  <div class="page-label">01 · Carátula</div>
+  <div class="sheet cover">
+    <div class="cover-hero">
+      <div class="cover-logo">
+        <div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div>
+      </div>
+      <div class="cover-tagline">Consultora en Higiene y Seguridad Laboral</div>
+    </div>
+
+    <div class="cover-title-block">
+      <div class="cover-kicker">Informe Técnico</div>
+      <h1 class="cover-study-type">Medición de Nivel Sonoro<br>Continuo Equivalente</h1>
+      <div class="cover-study-sub">Evaluación de exposición laboral a ruido — Res. SRT 85/2012</div>
+
+      <div class="cover-card">
+        <div class="row">
+          <div>
+            <div class="label">Cliente — Razón Social</div>
+            <div class="value big"><span class="field">[RAZÓN SOCIAL]</span></div>
+          </div>
+          <div>
+            <div class="label">N° de informe</div>
+            <div class="value big"><span class="field">[BS-AAAA-NNNN]</span></div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="label">Domicilio del establecimiento</div>
+            <div class="value"><span class="field">[DIRECCIÓN]</span><br><span class="field">[LOCALIDAD]</span>, <span class="field">[PROVINCIA]</span> (CP <span class="field">[CP]</span>)</div>
+          </div>
+          <div>
+            <div class="label">CUIT</div>
+            <div class="value"><span class="field">[XX-XXXXXXXX-X]</span></div>
+            <div class="label" style="margin-top:8px;">Actividad principal</div>
+            <div class="value"><span class="field">[ACTIVIDAD PRINCIPAL]</span></div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="label">Fecha de medición</div>
+            <div class="value"><span class="field">[DD/MM/AAAA]</span></div>
+          </div>
+          <div>
+            <div class="label">Fecha de emisión</div>
+            <div class="value"><span class="field">[DD/MM/AAAA]</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-foot">
+      <div>Preparado por BaseSegura Consultora H&amp;S</div>
+    </div>
+  </div>
+
+  <!-- ============ SECCIÓN 1 · OBJETO DE ESTUDIO ============ -->
+  <div class="page-label">02 · Objeto de estudio</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini">
+        <div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div>
+      </div>
+      <div class="report-ref">
+        <div class="type">Medición de Ruido Laboral</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Sección 1</div>
+      <h2 class="section-title">Objeto de estudio</h2>
+
+      <p class="lead">El presente estudio tiene por objeto evaluar los niveles de ruido presentes en el ambiente laboral del establecimiento, a fin de determinar la exposición sonora de los trabajadores y verificar el cumplimiento de los valores límite establecidos por la normativa vigente en materia de higiene y seguridad en el trabajo.</p>
+
+      <p>Para ello se realizan mediciones del <strong>Nivel Sonoro Continuo Equivalente (NSCE)</strong> en puntos representativos de los sectores operativos y puestos de trabajo, procurando no interferir en la rutina normal de la actividad. En todos los casos se prioriza la <em>condición más desfavorable</em> con el objeto de proteger al personal; cuando resulta necesario, se solicita la operación simultánea de todas las fuentes sonoras para garantizar la representatividad del escenario evaluado.</p>
+
+      <div class="callout info">
+        <div class="title">Beneficios de un ambiente sonoro controlado</div>
+        Un ambiente laboral en el que el NSCE no genera un riesgo preponderante para los trabajadores se traduce en: mejora de la productividad, confort en el desempeño de las tareas, reducción del riesgo de accidentes y enfermedades profesionales, y disminución de la fatiga y el estrés ocupacional.
+      </div>
+
+      <h3 class="h3">1.1 Alcance técnico del informe</h3>
+      <p>El informe documenta la metodología aplicada, los instrumentos utilizados, los puntos de medición relevados, los valores obtenidos y la conclusión respecto al cumplimiento normativo, junto con las recomendaciones técnicas aplicables. Se adjunta, conforme lo establece la Res. SRT 85/2012, el protocolo oficial de medición, el certificado de calibración del instrumento y el plano/croquis del establecimiento con la ubicación de los puntos evaluados.</p>
+
+      <h3 class="h3">1.2 Responsable técnico</h3>
+      <table class="meta">
+        <tr><th>Profesional actuante</th><td><span class="field">[NOMBRE Y APELLIDO — MATRÍCULA PROFESIONAL]</span></td></tr>
+        <tr><th>Título habilitante</th><td><span class="field">[Lic./Ing. en Higiene y Seguridad en el Trabajo]</span></td></tr>
+        <tr><th>Registro / Matrícula</th><td><span class="field">[N° de matrícula — Provincia / Consejo]</span></td></tr>
+      </table>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span>
+        <span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span>
+        <span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 2</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SECCIÓN 2 · ALCANCE ============ -->
+  <div class="page-label">03 · Alcance</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Medición de Ruido Laboral</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Sección 2</div>
+      <h2 class="section-title">Alcance</h2>
+
+      <p class="lead">El presente informe alcanza exclusivamente al establecimiento de la empresa <strong><span class="field">[RAZÓN SOCIAL]</span></strong>, ubicado en <strong><span class="field">[DIRECCIÓN COMPLETA DEL ESTABLECIMIENTO]</span></strong>, <strong><span class="field">[LOCALIDAD]</span>, <span class="field">[PROVINCIA]</span></strong>. La actividad principal desarrollada en el sitio es <strong><span class="field">[DESCRIPCIÓN DE LA ACTIVIDAD PRINCIPAL]</span></strong>.</p>
+
+      <h3 class="h3">2.1 Sectores y puestos incluidos</h3>
+      <p>La evaluación comprende los siguientes sectores operativos y puestos de trabajo del establecimiento:</p>
+      <div class="field block tall">[LISTADO DE SECTORES Y PUESTOS INCLUIDOS EN LA MEDICIÓN — por ejemplo: Planta Baja / Taller general / Cabina de pintura / Mecánico / Compresor / Mesas de trabajo, etc.]</div>
+
+      <h3 class="h3">2.2 Datos identificatorios del establecimiento</h3>
+      <table class="meta">
+        <tr><th>Razón Social</th><td><span class="field">[RAZÓN SOCIAL]</span></td></tr>
+        <tr><th>CUIT</th><td><span class="field">[XX-XXXXXXXX-X]</span></td></tr>
+        <tr><th>Dirección</th><td><span class="field">[DIRECCIÓN COMPLETA]</span></td></tr>
+        <tr><th>Localidad</th><td><span class="field">[LOCALIDAD]</span></td></tr>
+        <tr><th>Código Postal</th><td><span class="field">[CP]</span></td></tr>
+        <tr><th>Provincia</th><td><span class="field">[PROVINCIA]</span></td></tr>
+        <tr><th>Actividad principal</th><td><span class="field">[DESCRIPCIÓN DE LA ACTIVIDAD PRINCIPAL]</span></td></tr>
+        <tr><th>Cantidad estimada de trabajadores en el sitio</th><td><span class="field">[N° DE TRABAJADORES]</span></td></tr>
+        <tr><th>Horarios / turnos habituales de trabajo</th><td><span class="field">[HORARIOS HABITUALES — ej. Lun a Vie 8 a 17:30 hs]</span></td></tr>
+        <tr><th>ART contratante</th><td><span class="field">[ART]</span></td></tr>
+      </table>
+
+      <h3 class="h3">2.3 Limitaciones del estudio</h3>
+      <p>Los resultados consignados en el presente informe son válidos únicamente para las condiciones operativas relevadas al momento de la medición y para los puntos evaluados. Cualquier modificación sustancial del proceso productivo, del layout de la planta o del equipamiento generador de ruido requerirá una nueva evaluación conforme lo establece la Res. SRT 85/2012.</p>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 3</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SECCIÓN 3 · MARCO LEGAL ============ -->
+  <div class="page-label">04 · Marco legal</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Medición de Ruido Laboral</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Sección 3</div>
+      <h2 class="section-title">Marco legal aplicable</h2>
+
+      <p class="lead">La exposición a ruido en el ambiente de trabajo se encuentra regulada en la República Argentina por un conjunto de normas nacionales y resoluciones de la Superintendencia de Riesgos del Trabajo (SRT), cuyo cumplimiento es obligatorio para el empleador.</p>
+
+      <table class="meta">
+        <tr>
+          <th>Ley N° 19.587</th>
+          <td>Ley de Higiene y Seguridad en el Trabajo. Establece las condiciones generales de higiene y seguridad que deben cumplirse en todo ámbito de trabajo en el territorio nacional.</td>
+        </tr>
+        <tr>
+          <th>Ley N° 24.557</th>
+          <td>Ley de Riesgos del Trabajo. Regula la prevención de los riesgos y la reparación de los daños derivados del trabajo.</td>
+        </tr>
+        <tr>
+          <th>Decreto 351/79</th>
+          <td>Decreto Reglamentario de la Ley 19.587. Establece los parámetros técnicos de aplicación, entre ellos los criterios sobre ruido en el ambiente laboral.</td>
+        </tr>
+        <tr>
+          <th>Resolución MTESS 295/2003</th>
+          <td>Aprueba las especificaciones técnicas sobre ergonomía y levantamiento manual de cargas, y actualiza los valores de exposición a ruido, derogando el Anexo V del Decreto 351/79.</td>
+        </tr>
+        <tr>
+          <th>Resolución SRT 85/2012</th>
+          <td>Aprueba el <strong>Protocolo para la Medición del Nivel de Ruido en el Ambiente Laboral</strong>, de uso obligatorio para profesionales que realicen este tipo de mediciones. Define los requisitos del instrumental, los datos a consignar y el formulario estandarizado que debe adjuntarse al informe.</td>
+        </tr>
+      </table>
+
+      <div class="callout info">
+        <div class="title">Criterio de aplicación</div>
+        El ruido en el ambiente laboral se rige, en forma concurrente, por la Ley 19.587/72 y su Decreto Reglamentario 351/79, por la Res. MTESS 295/2003 —que actualizó los valores de exposición diaria admisibles— y por la Res. SRT 85/2012, que establece el formato del protocolo de medición. El presente informe se ajusta a todas ellas.
+      </div>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 4</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SECCIÓN 4 · METODOLOGÍA (A) ============ -->
+  <div class="page-label">05 · Metodología de trabajo (parte 1)</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Medición de Ruido Laboral</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Sección 4</div>
+      <h2 class="section-title">Metodología de trabajo</h2>
+
+      <p class="lead">La metodología empleada se basa en los criterios establecidos por la Res. SRT 85/2012 y la Res. MTESS 295/2003, utilizando instrumental de medición acústica clase 1 con certificado de calibración vigente. A continuación se sintetizan los fundamentos técnicos y los conceptos normativos aplicados.</p>
+
+      <h3 class="h3">4.1 Conceptos técnicos de referencia</h3>
+      <p>El <strong>sonido</strong> es un fenómeno esencialmente oscilatorio; consiste en una variación de la presión que se propaga como una onda a través de un medio sólido, líquido o gaseoso. La onda sonora se caracteriza por su frecuencia —número de oscilaciones por segundo, medida en Hertz (Hz)— y por su intensidad. El rango audible para el ser humano se ubica entre 20 Hz y 20.000 Hz. Se denomina <strong>ruido</strong> a todo sonido indeseable.</p>
+
+      <h3 class="h3">4.2 Clasificación del ruido</h3>
+      <p>En función de su comportamiento temporal, el ruido presente en los ambientes productivos se clasifica en:</p>
+      <ul class="clean">
+        <li><strong>Continuo:</strong> aquel cuya duración ocupa la mayor parte de la jornada laboral y cuyas variaciones no superan los +5 dB.</li>
+        <li><strong>Discontinuo (intermitente):</strong> similar al continuo pero que opera en intervalos, o cuyas variaciones superan los +5 dB.</li>
+        <li><strong>De impacto:</strong> de crecimiento casi instantáneo, con una frecuencia de repetición menor a 10 eventos por segundo y decrecimiento exponencial.</li>
+        <li><strong>Impulsivo:</strong> de crecimiento instantáneo y duración menor a 50 milisegundos.</li>
+      </ul>
+      <p>Esta clasificación resulta determinante, ya que la reacción fisiológica y los efectos que cada tipo de ruido produce sobre las personas son sustancialmente distintos.</p>
+
+      <h3 class="h3">4.3 Magnitudes de medición</h3>
+      <p>Los niveles sonoros se expresan en <strong>decibeles (dB)</strong>. El decibel es una unidad logarítmica que relaciona la presión sonora medida con una presión de referencia. Los <strong>dB(A)</strong> representan el nivel de sonido tal como es efectivamente percibido por el oído humano, a partir de la aplicación de la curva de ponderación A, que atenúa las frecuencias a las que el oído es menos sensible.</p>
+
+      <div class="callout">
+        <div class="title">Definición — Nivel Sonoro Continuo Equivalente (NSCE)</div>
+        Es el nivel sonoro, expresado en dB(A), de un ruido supuesto constante y continuo durante toda la jornada, cuya energía sonora total es igual a la del ruido variable realmente medido a lo largo de la misma. Constituye el parámetro de comparación con los valores límite normativos.
+      </div>
+
+      <p>La <strong>dosis de ruido</strong> es la cantidad de energía sonora que un trabajador recibe durante la jornada laboral. Depende tanto del nivel sonoro continuo equivalente como de la duración de la exposición. Por ese motivo, el daño potencial a la audición es función simultánea del nivel y del tiempo de exposición.</p>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 5</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SECCIÓN 4 · METODOLOGÍA (B) ============ -->
+  <div class="page-label">06 · Metodología de trabajo (parte 2)</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Medición de Ruido Laboral</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Sección 4 (cont.)</div>
+      <h2 class="section-title">Efectos, criterios y procedimiento</h2>
+
+      <h3 class="h3">4.4 Efectos de la exposición al ruido</h3>
+      <p>La exposición prolongada a niveles sonoros elevados produce efectos auditivos y extraauditivos sobre los trabajadores, entre los que se destacan:</p>
+      <ul class="clean">
+        <li>Pérdida progresiva de la capacidad auditiva (hipoacusia inducida por ruido).</li>
+        <li>Acúfenos (zumbidos o silbidos persistentes).</li>
+        <li>Interferencia en la comunicación oral y en la percepción de señales de alarma.</li>
+        <li>Malestar general, estrés y nerviosismo.</li>
+        <li>Trastornos del aparato digestivo y efectos cardiovasculares.</li>
+        <li>Disminución del rendimiento laboral e incremento del riesgo de accidentes.</li>
+        <li>Cambios en el comportamiento social y en los patrones de descanso.</li>
+      </ul>
+
+      <h3 class="h3">4.5 Tiempos máximos de exposición (Res. MTESS 295/2003)</h3>
+      <p>La normativa vigente establece los siguientes tiempos máximos de exposición en función del nivel sonoro continuo equivalente. A partir de 85 dB(A) para ocho horas de trabajo, resulta obligatorio el uso de protección auditiva.</p>
+
+      <table class="ladder">
+        <thead>
+          <tr>
+            <th>Duración por día</th>
+            <th>Nivel sonoro dB(A)</th>
+            <th>Duración por día</th>
+            <th>Nivel sonoro dB(A)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>16 h</td><td>82</td><td>30 min</td><td>97</td></tr>
+          <tr><td>8 h</td><td>85</td><td>15 min</td><td>100</td></tr>
+          <tr><td>4 h</td><td>88</td><td>7,5 min</td><td>103</td></tr>
+          <tr><td>2 h</td><td>91</td><td>3,75 min</td><td>106</td></tr>
+          <tr><td>1 h</td><td>94</td><td>&lt; 1 min</td><td>≥ 115</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:10px; color:var(--bs-muted); margin-top:-2px;">Fuente: Res. MTESS 295/2003, Anexo V — Tabla de tiempos máximos permitidos de exposición diaria al ruido en función del NSCE. Para ruidos de impulso/impacto el pico no ponderado máximo admisible sin protección es 140 dB(C).</p>
+
+      <h3 class="h3">4.6 Criterios técnicos aplicados</h3>
+      <ul class="clean">
+        <li>Ningún trabajador podrá estar expuesto a un NSCE superior a lo establecido en la tabla precedente.</li>
+        <li>Cuando el NSCE supere el valor límite, deberá reducirse aplicando, en primer término, <em>correcciones de ingeniería</em>; en segunda instancia, <em>medidas administrativas</em> (reducción del tiempo de exposición); y, de no ser suficientes, mediante <em>protección auditiva</em> adecuada al trabajador.</li>
+        <li>Todo trabajador expuesto a un NSCE igual o superior a 85 dB(A) debe ser sometido a exámenes médicos audiométricos periódicos.</li>
+        <li>Para ruidos de impulso o impacto, no se permiten exposiciones sin protección auditiva por encima de un pico no ponderado de 140 dB(C).</li>
+      </ul>
+
+      <h3 class="h3">4.7 Procedimiento de medición</h3>
+      <p>Los resultados consignados en el presente informe surgen de mediciones realizadas con sonómetro integrador (decibelímetro) en <strong>escala de ponderación A y respuesta temporal <em>lenta</em> (Slow)</strong>, sobre el trabajador desarrollando sus tareas habituales durante un tiempo representativo de la jornada. El micrófono del instrumento se ubica a la altura del oído del trabajador analizado, conforme lo prescribe la Res. SRT 85/2012. Para evaluación personal de dosis se emplea dosímetro según los mismos criterios normativos.</p>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 6</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SECCIÓN 5 · PROTOCOLO SRT 85/12 · DATOS ============ -->
+  <div class="page-label">07 · Protocolo Res. SRT 85/2012 — Datos</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Medición de Ruido Laboral</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Sección 5</div>
+      <h2 class="section-title">Protocolo de medición — Res. SRT 85/2012</h2>
+
+      <p class="lead">Se reproduce a continuación el Protocolo oficial de Medición de Ruido en el Ambiente Laboral conforme al Anexo de la Resolución SRT 85/2012, con los datos correspondientes al establecimiento evaluado.</p>
+
+      <table class="srt">
+        <tr><td class="doc-title" colspan="2">Protocolo de Medición de Ruido en el Ambiente Laboral</td></tr>
+        <tr class="section-row"><th colspan="2">Datos del establecimiento</th></tr>
+        <tr>
+          <td class="label-cell">Razón Social</td>
+          <td class="data-cell"><span class="field">[RAZÓN SOCIAL]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">C.U.I.T.</td>
+          <td class="data-cell"><span class="field">[XX-XXXXXXXX-X]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Dirección</td>
+          <td class="data-cell"><span class="field">[DIRECCIÓN DEL ESTABLECIMIENTO]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Localidad</td>
+          <td class="data-cell"><span class="field">[LOCALIDAD]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">C.P.</td>
+          <td class="data-cell"><span class="field">[CP]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Provincia</td>
+          <td class="data-cell"><span class="field">[PROVINCIA]</span></td>
+        </tr>
+
+        <tr class="section-row"><th colspan="2">Datos para la medición</th></tr>
+        <tr>
+          <td class="label-cell">Marca, modelo y número de serie del instrumento utilizado</td>
+          <td class="data-cell"><span class="field">[MARCA / MODELO / N° SERIE — ej. Cesva / SC260 / T237079]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Fecha del certificado de calibración del instrumento utilizado en la medición</td>
+          <td class="data-cell"><span class="field">[DD/MM/AAAA]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Fecha de la medición</td>
+          <td class="data-cell"><span class="field">[DD/MM/AAAA]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Hora de inicio</td>
+          <td class="data-cell"><span class="field">[HH:MM]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Hora de finalización</td>
+          <td class="data-cell"><span class="field">[HH:MM]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Horarios / turnos habituales de trabajo</td>
+          <td class="data-cell"><span class="field">[HORARIOS HABITUALES — ej. Lun a Vie de 8 a 17:30 hs]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Describa las condiciones normales y/o habituales de trabajo</td>
+          <td class="data-cell"><div class="field block tall">[DESCRIPCIÓN DE LAS CONDICIONES NORMALES: tipo de actividad, procesos, equipamiento utilizado, cantidad de empleados, etc.]</div></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Describa las condiciones de trabajo al momento de la medición</td>
+          <td class="data-cell"><div class="field block tall">[DESCRIPCIÓN DE LAS CONDICIONES AL MOMENTO DE LA MEDICIÓN: sectores en operación, condiciones representativas o más desfavorables, etc.]</div></td>
+        </tr>
+
+        <tr class="section-row"><th colspan="2">Documentación que se adjunta a la medición</th></tr>
+        <tr>
+          <td class="label-cell">Certificado de calibración</td>
+          <td class="data-cell"><span class="field">[SÍ / NO — referencia al anexo]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Plano o croquis del establecimiento</td>
+          <td class="data-cell"><span class="field">[SÍ / NO — referencia al anexo]</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 7</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SECCIÓN 5 · TABLA DE MEDICIONES (APAISADO) ============ -->
+  <div class="page-label">08 · Tabla de datos de la medición (A4 apaisado)</div>
+  <div class="sheet inner landscape">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Protocolo SRT 85/12 · Datos de la medición</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body" style="padding: 0 15mm;">
+      <div class="section-kicker">Sección 5 · Datos de la medición</div>
+      <h2 class="section-title" style="font-size:18px;">Tabla de mediciones — Protocolo Res. SRT 85/2012</h2>
+
+      <p style="font-size:10.5px;">Datos consignados conforme al Anexo de la Res. SRT 85/2012. <strong>Razón social:</strong> <span class="field">[RAZÓN SOCIAL]</span> · <strong>CUIT:</strong> <span class="field">[XX-XXXXXXXX-X]</span> · <strong>Dirección:</strong> <span class="field">[DIRECCIÓN]</span>, <span class="field">[LOCALIDAD]</span>, <span class="field">[PROVINCIA]</span> (CP <span class="field">[CP]</span>).</p>
+
+      <table class="data" style="font-size:9px;">
+        <thead>
+          <tr>
+            <th style="width:4%;">Punto</th>
+            <th style="width:10%;">Sector</th>
+            <th style="width:12%;">Puesto / Puesto tipo / Puesto móvil</th>
+            <th style="width:7%;">Tiempo de exposición Te (h)</th>
+            <th style="width:7%;">Tiempo de integración</th>
+            <th style="width:9%;">Características (continuo / intermitente / impulso)</th>
+            <th style="width:8%;" class="num">Ruido impulso/impacto · LC pico (dBC)</th>
+            <th style="width:8%;" class="num">Continuo/Intermit. · LAeq,Te (dBA)</th>
+            <th style="width:9%;" class="num">Suma de fracciones</th>
+            <th style="width:7%;" class="num">Dosis (%)</th>
+            <th style="width:7%;">¿Cumple? (SÍ/NO)</th>
+            <th style="width:12%;">Observaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><span class="field">[Sector]</span></td>
+            <td><span class="field">[Puesto]</span></td>
+            <td class="num"><span class="field">[Te]</span></td>
+            <td><span class="field">[ej. 5 min]</span></td>
+            <td><span class="field">[Continuo]</span></td>
+            <td class="num"><span class="field">[—]</span></td>
+            <td class="num"><span class="field">[dBA]</span></td>
+            <td class="num"><span class="field">[—]</span></td>
+            <td class="num"><span class="field">[—]</span></td>
+            <td><span class="field">[SÍ/NO]</span></td>
+            <td><span class="field">[Obs.]</span></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><span class="field">[Sector]</span></td>
+            <td><span class="field">[Puesto]</span></td>
+            <td class="num"><span class="field">[Te]</span></td>
+            <td><span class="field">[ej. 5 min]</span></td>
+            <td><span class="field">[Continuo]</span></td>
+            <td class="num"><span class="field">[—]</span></td>
+            <td class="num"><span class="field">[dBA]</span></td>
+            <td class="num"><span class="field">[—]</span></td>
+            <td class="num"><span class="field">[—]</span></td>
+            <td><span class="field">[SÍ/NO]</span></td>
+            <td><span class="field">[Obs.]</span></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><span class="field">[Sector]</span></td>
+            <td><span class="field">[Puesto]</span></td>
+            <td class="num"><span class="field">[Te]</span></td>
+            <td><span class="field">[ej. 5 min]</span></td>
+            <td><span class="field">[Continuo / Intermitente / Impulso]</span></td>
+            <td class="num"><span class="field">[—]</span></td>
+            <td class="num"><span class="field">[dBA]</span></td>
+            <td class="num"><span class="field">[—]</span></td>
+            <td class="num"><span class="field">[—]</span></td>
+            <td><span class="field">[SÍ/NO]</span></td>
+            <td><span class="field">[Obs.]</span></td>
+          </tr>
+          <tr>
+            <td colspan="12" style="text-align:center; color:var(--bs-muted); font-style:italic; padding: 8px;">
+              — Duplicar las filas anteriores según la cantidad de puntos de medición relevados —
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout info" style="margin-top: 10px;">
+        <div class="title">Información adicional de la medición</div>
+        <div class="field block">[INFORMACIÓN ADICIONAL — ej.: "Se realiza la medición de ruido tomando como referencia la peor condición, con todas las máquinas en funcionamiento el día de la medición."]</div>
+      </div>
+
+      <p style="font-size:9.5px; color:var(--bs-muted); margin-top:12px;">
+        <strong>Referencias:</strong> Te = Tiempo de exposición del trabajador. LC pico (dBC) = Nivel pico de presión acústica ponderado C para ruidos de impulso o impacto. LAeq,Te (dBA) = Nivel de presión acústica equivalente integrado en el tiempo de exposición, ponderación A. Valor límite: 85 dB(A) para 8 h de exposición — Res. MTESS 295/2003, Anexo V.
+      </p>
+    </div>
+
+    <div class="inner-footer" style="padding: 0 15mm;">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 8</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SECCIÓN 5 · ANÁLISIS DE DATOS Y MEJORAS ============ -->
+  <div class="page-label">09 · Análisis de datos y mejoras a realizar</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Medición de Ruido Laboral</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Sección 5 · Análisis</div>
+      <h2 class="section-title">Análisis de los datos y mejoras a realizar</h2>
+
+      <table class="srt" style="margin-top:10px;">
+        <tr><td class="doc-title" colspan="2">Protocolo de Medición de Ruido en el Ambiente Laboral</td></tr>
+        <tr>
+          <td class="label-cell">Razón social</td>
+          <td class="data-cell"><span class="field">[RAZÓN SOCIAL]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">C.U.I.T.</td>
+          <td class="data-cell"><span class="field">[XX-XXXXXXXX-X]</span></td>
+        </tr>
+        <tr>
+          <td class="label-cell">Dirección</td>
+          <td class="data-cell"><span class="field">[DIRECCIÓN]</span>, <span class="field">[LOCALIDAD]</span>, <span class="field">[PROVINCIA]</span> (CP <span class="field">[CP]</span>)</td>
+        </tr>
+      </table>
+
+      <table class="srt">
+        <tr class="section-row"><th colspan="2">Análisis de los Datos y Mejoras a Realizar</th></tr>
+        <tr>
+          <th style="width:50%; background: var(--bs-bg-soft); color: var(--bs-primary-2); font-family:var(--font-title); text-transform:uppercase; letter-spacing:0.08em; font-size:10px;">Conclusiones</th>
+          <th style="width:50%; background: var(--bs-bg-soft); color: var(--bs-primary-2); font-family:var(--font-title); text-transform:uppercase; letter-spacing:0.08em; font-size:10px;">Recomendaciones para adecuar el nivel de ruido a la legislación vigente</th>
+        </tr>
+        <tr>
+          <td class="data-cell" style="vertical-align:top;">
+            <div class="field block tall" style="min-height: 120mm;">[CONCLUSIONES DEL ESTUDIO — por ejemplo: "De acuerdo a Ley 19.587, Dec. 351/79 y Res. MTESS 295/2003, a partir de los 85 dB(A) de NSCE para 8 h de trabajo es obligatorio el uso de protección auditiva. De acuerdo a los valores obtenidos y al marco legal aplicable, [...se describe el resultado: cumple / no cumple / cumple parcialmente...]. Se utiliza decibelímetro integrador y la medición se realiza en el ambiente laboral; por este motivo, no se completan las columnas de 'Resultado de la suma de las fracciones' y 'Dosis en porcentaje'..."]</div>
+          </td>
+          <td class="data-cell" style="vertical-align:top;">
+            <div class="field block tall" style="min-height: 120mm;">[RECOMENDACIONES — por ejemplo: "Si bien la medición arrojó valores por debajo de los 85 dB(A), se recomienda que el personal disponga de protectores auditivos cuando utilice herramientas eléctricas para trabajos puntuales que puedan generar ruido (amoladora, apretadora neumática, soplete, etc.). Asimismo, se recomienda realizar exámenes audiométricos periódicos al personal expuesto y repetir la medición cada 12 meses o ante modificaciones del layout productivo."]</div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 9</span></div>
+    </div>
+  </div>
+
+  <!-- ============ ANEXO · PLANO DEL ESTABLECIMIENTO ============ -->
+  <div class="page-label">10 · Anexo · Plano del establecimiento</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Anexo · Plano del establecimiento</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Anexo I</div>
+      <h2 class="section-title">Plano del establecimiento</h2>
+
+      <p class="lead">Se presenta el plano/croquis del establecimiento con la identificación de los puntos de medición relevados durante el estudio, conforme a lo requerido por la Res. SRT 85/2012.</p>
+
+      <div class="plano-placeholder">
+        <div>
+          <span class="icon">▢</span>
+          [INSERTAR PLANO O CROQUIS DEL ESTABLECIMIENTO]<br>
+          <span style="font-size:10px; color:var(--bs-muted); font-weight:400;">Indicar la ubicación de los puntos de medición P-01, P-02, ... P-N sobre el layout de planta.</span>
+        </div>
+      </div>
+
+      <p style="font-size:10.5px; color:var(--bs-muted);"><strong>Referencia:</strong> plano proporcionado por el cliente / relevamiento propio. Escala aproximada: <span class="field">[ESCALA]</span>. Fecha de relevamiento: <span class="field">[DD/MM/AAAA]</span>.</p>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 10</span></div>
+    </div>
+  </div>
+
+  <!-- ============ ANEXO · CERTIFICADO DE CALIBRACIÓN ============ -->
+  <div class="page-label">11 · Anexo · Certificado de calibración</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Anexo · Certificado de calibración</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Anexo II</div>
+      <h2 class="section-title">Certificado de calibración del instrumento</h2>
+
+      <p class="lead">Se adjunta el certificado de calibración trazable del instrumento utilizado en la medición, conforme exigencia de la Res. SRT 85/2012.</p>
+
+      <table class="meta">
+        <tr><th>Instrumento</th><td><span class="field">[MARCA / MODELO]</span></td></tr>
+        <tr><th>Número de serie</th><td><span class="field">[N° DE SERIE]</span></td></tr>
+        <tr><th>Clase (IEC 61672)</th><td><span class="field">[Clase 1 / Clase 2]</span></td></tr>
+        <tr><th>Laboratorio de calibración</th><td><span class="field">[LABORATORIO EMISOR]</span></td></tr>
+        <tr><th>N° de certificado</th><td><span class="field">[N° DE CERTIFICADO]</span></td></tr>
+        <tr><th>Fecha de calibración</th><td><span class="field">[DD/MM/AAAA]</span></td></tr>
+        <tr><th>Vigencia</th><td><span class="field">[DD/MM/AAAA]</span></td></tr>
+        <tr><th>Trazabilidad</th><td><span class="field">[INTI / otro organismo]</span></td></tr>
+      </table>
+
+      <div class="plano-placeholder" style="min-height: 100mm;">
+        <div>
+          <span class="icon">▢</span>
+          [INSERTAR IMAGEN / ESCANEO DEL CERTIFICADO DE CALIBRACIÓN]
+        </div>
+      </div>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 11</span></div>
+    </div>
+  </div>
+
+  <!-- ============ CIERRE / FIRMA ============ -->
+  <div class="page-label">12 · Cierre del informe</div>
+  <div class="sheet inner">
+    <div class="inner-header">
+      <div class="logo-mini"><div class="wordmark"><span class="base">Base</span><span class="segura">Segura</span></div></div>
+      <div class="report-ref">
+        <div class="type">Medición de Ruido Laboral</div>
+        <div class="client"><span class="field">[RAZÓN SOCIAL]</span></div>
+      </div>
+    </div>
+
+    <div class="inner-body">
+      <div class="section-kicker">Cierre del informe</div>
+      <h2 class="section-title">Declaración profesional y firma</h2>
+
+      <p class="lead">El/la profesional firmante declara haber realizado las mediciones y el análisis consignados en el presente informe de acuerdo con los procedimientos establecidos por la Res. SRT 85/2012, la Res. MTESS 295/2003 y la restante normativa vigente en materia de higiene y seguridad en el trabajo, asumiendo la responsabilidad técnica sobre los datos y conclusiones aquí expuestos.</p>
+
+      <div style="margin-top: 25mm; display:grid; grid-template-columns: 1fr 1fr; gap: 20mm;">
+        <div>
+          <div style="border-top: 1px solid var(--bs-primary-2); padding-top: 6px; margin-top: 28mm;"></div>
+          <div style="font-family: var(--font-title); font-size: 11px; font-weight:600; color: var(--bs-primary-2); text-transform:uppercase; letter-spacing:0.08em;">Firma y sello del profesional</div>
+          <div style="font-size: 11px; margin-top: 6px;"><span class="field">[NOMBRE Y APELLIDO]</span></div>
+          <div style="font-size: 10.5px; color: var(--bs-muted); margin-top: 2px;"><span class="field">[TÍTULO · MATRÍCULA N° — PROVINCIA]</span></div>
+        </div>
+        <div>
+          <div style="border-top: 1px solid var(--bs-primary-2); padding-top: 6px; margin-top: 28mm;"></div>
+          <div style="font-family: var(--font-title); font-size: 11px; font-weight:600; color: var(--bs-primary-2); text-transform:uppercase; letter-spacing:0.08em;">Recibido por el cliente</div>
+          <div style="font-size: 11px; margin-top: 6px;"><span class="field">[NOMBRE Y APELLIDO]</span></div>
+          <div style="font-size: 10.5px; color: var(--bs-muted); margin-top: 2px;"><span class="field">[CARGO]</span> · <span class="field">[FECHA]</span></div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 22mm;">
+        <div class="title">Nota sobre validez del informe</div>
+        Los resultados consignados corresponden a las condiciones operativas relevadas el día de la medición. Cualquier modificación sustancial del proceso productivo, del layout de planta o del equipamiento generador de ruido requerirá una nueva evaluación. Se recomienda repetir la medición dentro de 12 meses o ante modificaciones significativas, conforme Res. SRT 85/2012.
+      </div>
+    </div>
+
+    <div class="inner-footer">
+      <div class="left">
+        <span class="link">basesegura.com.ar</span><span class="sep">·</span>
+        <span>LinkedIn /in/basesegura</span><span class="sep">·</span>
+        <span>WhatsApp +54 9 11 7826-5989</span>
+      </div>
+      <div class="right"><span class="pg">Página 12</span></div>
+    </div>
+  </div>
+
+</body>
+</html>
